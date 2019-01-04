@@ -6,8 +6,8 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
-import { Component, createRef, useMemo } from '@wordpress/element';
+import { sprintf, __ } from '@wordpress/i18n';
+import { Component, createRef, Fragment, useMemo } from '@wordpress/element';
 import {
 	ExternalLink,
 	IconButton,
@@ -127,7 +127,7 @@ const LinkViewer = ( { url, editLink } ) => {
 };
 
 class InlineLinkUI extends Component {
-	constructor() {
+	constructor( { activeAttributes } ) {
 		super( ...arguments );
 
 		this.editLink = this.editLink.bind( this );
@@ -140,22 +140,17 @@ class InlineLinkUI extends Component {
 		this.autocompleteRef = createRef();
 
 		this.state = {
-			opensInNewWindow: false,
+			attributes: activeAttributes,
 			inputValue: '',
 		};
 	}
 
 	static getDerivedStateFromProps( props, state ) {
-		const { activeAttributes: { url, target } } = props;
-		const opensInNewWindow = target === '_blank';
+		const { activeAttributes: { url } } = props;
 
 		if ( ! isShowingInput( props, state ) ) {
 			if ( url !== state.inputValue ) {
 				return { inputValue: url };
-			}
-
-			if ( opensInNewWindow !== state.opensInNewWindow ) {
-				return { opensInNewWindow };
 			}
 		}
 
@@ -173,20 +168,54 @@ class InlineLinkUI extends Component {
 		this.setState( { inputValue } );
 	}
 
-	setLinkTarget( opensInNewWindow ) {
-		const { activeAttributes: { url = '' }, value, onChange } = this.props;
+	setLinkAttributes( attributes ) {
+		this.setState( {
+			...this.state,
+			attributes,
+		}, () => {
+			const {
+				value,
+				onChange,
+				activeAttributes: {
+					url,
+				},
+			} = this.props;
 
-		this.setState( { opensInNewWindow } );
+			onChange( applyFormat( value, createLinkFormat( {
+				...this.state.attributes,
+				url,
+			} ) ) );
+		} );
+	}
+
+	setLinkTarget( opensInNewWindow ) {
+		const { attributes = { url: '' }, value } = this.props;
 
 		// Apply now if URL is not being edited.
 		if ( ! isShowingInput( this.props, this.state ) ) {
 			const selectedText = getTextContent( slice( value ) );
 
-			onChange( applyFormat( value, createLinkFormat( {
-				url,
-				opensInNewWindow,
-				text: selectedText,
-			} ) ) );
+			if ( opensInNewWindow ) {
+				this.setLinkAttributes( {
+					'aria-label': sprintf( __( '%s (opens in a new tab)' ), selectedText ),
+					target: '_blank',
+					rel: 'nofollow noreferrer',
+					...attributes,
+				} );
+			} else {
+				if ( typeof attributes.rel === 'string' ) {
+					attributes.rel = attributes.rel.split( ' ' ).filter( ( relItem ) => {
+						return relItem !== 'noopener' && relItem !== 'noreferrer';
+					} ).join( ' ' );
+				} else {
+					delete attributes.rel;
+				}
+
+				delete attributes.target;
+				attributes[ 'aria-label' ] = selectedText;
+
+				this.setLinkAttributes( attributes );
+			}
 		}
 	}
 
@@ -197,13 +226,13 @@ class InlineLinkUI extends Component {
 
 	submitLink( event ) {
 		const { isActive, value, onChange, speak } = this.props;
-		const { inputValue, opensInNewWindow } = this.state;
+		const { inputValue } = this.state;
 		const url = prependHTTP( inputValue );
 		const selectedText = getTextContent( slice( value ) );
 		const format = createLinkFormat( {
 			url,
-			opensInNewWindow,
 			text: selectedText,
+			...this.state.attributes,
 		} );
 
 		event.preventDefault();
@@ -251,7 +280,7 @@ class InlineLinkUI extends Component {
 			return null;
 		}
 
-		const { inputValue, opensInNewWindow } = this.state;
+		const { inputValue } = this.state;
 		const showInput = isShowingInput( this.props, this.state );
 
 		return (
@@ -263,11 +292,13 @@ class InlineLinkUI extends Component {
 				onClose={ this.resetState }
 				focusOnMount={ showInput ? 'firstElement' : false }
 				renderSettings={ () => (
-					<ToggleControl
-						label={ __( 'Open in New Tab' ) }
-						checked={ opensInNewWindow }
-						onChange={ this.setLinkTarget }
-					/>
+					<Fragment>
+						<ToggleControl
+							label={ __( 'Open in New Tab' ) }
+							checked={ this.state.attributes.target === '_blank' }
+							onChange={ this.setLinkTarget }
+						/>
+					</Fragment>
 				) }
 			>
 				{ showInput ? (
