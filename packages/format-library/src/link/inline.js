@@ -13,6 +13,7 @@ import {
 	IconButton,
 	ToggleControl,
 	withSpokenMessages,
+	Slot,
 } from '@wordpress/components';
 import { LEFT, RIGHT, UP, DOWN, BACKSPACE, ENTER } from '@wordpress/keycodes';
 import { getRectangleFromRange } from '@wordpress/dom';
@@ -290,6 +291,7 @@ class InlineLinkUI extends Component {
 		const showInput = isShowingInput( this.props, this.state );
 
 		return (
+
 			<URLPopoverAtLink
 				value={ value }
 				isActive={ isActive }
@@ -303,6 +305,13 @@ class InlineLinkUI extends Component {
 							label={ __( 'Open in New Tab' ) }
 							checked={ this.state.attributes.target === '_blank' }
 							onChange={ this.setLinkTarget }
+						/>
+						<Slot
+							name="LinkSettings"
+							fillProps={ {
+								attributes: this.state.attributes,
+								setLinkAttributes: this.setLinkAttributes,
+							} }
 						/>
 					</Fragment>
 				) }
