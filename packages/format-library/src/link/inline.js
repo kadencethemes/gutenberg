@@ -172,7 +172,6 @@ class InlineLinkUI extends Component {
 
 	setLinkAttributes( attributes ) {
 		this.setState( {
-			...this.state,
 			attributes,
 		}, () => {
 			// Don't apply if URL is being edited.
