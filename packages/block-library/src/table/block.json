@@ -29,6 +29,12 @@
 							"type": "string",
 							"default": "td",
 							"source": "tag"
+						},
+						"align": {
+							"type": "string",
+							"source": "attribute",
+							"selector": "td,th",
+							"attribute": "data-align"
 						}
 					}
 				}

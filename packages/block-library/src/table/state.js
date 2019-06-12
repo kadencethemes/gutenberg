@@ -36,11 +36,12 @@ export function createTable( {
  *
  * @return {Object} New table state.
  */
-export function updateCellContent( state, {
+export function updateCellAttribute( state, {
 	section,
 	rowIndex,
 	columnIndex,
-	content,
+	attributeName,
+	value,
 } ) {
 	return {
 		[ section ]: state[ section ].map( ( row, currentRowIndex ) => {
@@ -56,12 +57,40 @@ export function updateCellContent( state, {
 
 					return {
 						...cell,
-						content,
+						[ attributeName ]: value,
 					};
 				} ),
 			};
 		} ),
 	};
+}
+
+export function getCellAttribute( state, {
+	section,
+	rowIndex,
+	columnIndex,
+	attributeName,
+} ) {
+	return get( state, [ section, rowIndex, 'cells', columnIndex, attributeName ] );
+}
+
+/**
+ * Updates cell content in the table state.
+ *
+ * @param {Object} state               Current table state.
+ * @param {string} options.section     Section of the cell to update.
+ * @param {number} options.rowIndex    Row index of the cell to update.
+ * @param {number} options.columnIndex Column index of the cell to update.
+ * @param {Array}  options.content     Content to set for the cell.
+ *
+ * @return {Object} New table state.
+ */
+export function updateCellContent( state, { content: value, ...options } ) {
+	return updateCellAttribute( state, {
+		...options,
+		value,
+		attributeName: 'content',
+	} );
 }
 
 /**
