@@ -40,13 +40,19 @@ export default function save( { attributes } ) {
 			<Tag>
 				{ rows.map( ( { cells }, rowIndex ) => (
 					<tr key={ rowIndex }>
-						{ cells.map( ( { content, tag }, cellIndex ) =>
-							<RichText.Content
-								tagName={ tag }
-								value={ content }
-								key={ cellIndex }
-							/>
-						) }
+						{ cells.map( ( { content, tag, align }, cellIndex ) => {
+							const cellStyles = align ? { textAlign: align } : undefined;
+
+							return (
+								<RichText.Content
+									style={ cellStyles }
+									tagName={ tag }
+									value={ content }
+									key={ cellIndex }
+									data-align={ align }
+								/>
+							);
+						} ) }
 					</tr>
 				) ) }
 			</Tag>
