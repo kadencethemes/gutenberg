@@ -40,22 +40,22 @@ describe( 'Table', () => {
 		await page.keyboard.press( 'Backspace' );
 		await page.keyboard.type( '5' );
 
-		// // Check for existence of the row count field.
+		// Check for existence of the row count field.
 		const rowCountLabel = await page.$x( "//div[@data-type='core/table']//label[text()='Row Count']" );
 		expect( rowCountLabel ).toHaveLength( 1 );
 
-		// // Modify the row count.
+		// Modify the row count.
 		await rowCountLabel[ 0 ].click();
 		const currentRowCount = await page.evaluate( () => document.activeElement.value );
 		expect( currentRowCount ).toBe( '2' );
 		await page.keyboard.press( 'Backspace' );
 		await page.keyboard.type( '10' );
 
-		// // Create the table.
+		// Create the table.
 		const createButton = await page.$x( createButtonSelector );
 		await createButton[ 0 ].click();
 
-		// // Expect the post content to have a correctly sized table.
+		// Expect the post content to have a correctly sized table.
 		expect( await getEditedPostContent() ).toMatchSnapshot();
 	} );
 
