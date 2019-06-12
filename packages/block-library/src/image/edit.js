@@ -191,10 +191,22 @@ class ImageEdit extends Component {
 			isEditing: false,
 		} );
 
+		const { id, url } = this.props.attributes;
+		let additionalAttributes;
+		// Reset the dimension attributes if changing to a different image.
+		if ( media.id !== id ) {
+			additionalAttributes = {
+				width: undefined,
+				height: undefined,
+			};
+		} else {
+			// Keep the same url when selecting the same file, so "Image Size" option is not changed.
+			additionalAttributes = { url };
+		}
+
 		this.props.setAttributes( {
 			...pickRelevantMediaFiles( media ),
-			width: undefined,
-			height: undefined,
+			...additionalAttributes,
 		} );
 	}
 
