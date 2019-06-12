@@ -28,11 +28,12 @@ export function createTable( {
 /**
  * Updates cell content in the table state.
  *
- * @param {Object} state               Current table state.
- * @param {string} options.section     Section of the cell to update.
- * @param {number} options.rowIndex    Row index of the cell to update.
- * @param {number} options.columnIndex Column index of the cell to update.
- * @param {Array}  options.content     Content to set for the cell.
+ * @param {Object} state               	 Current table state.
+ * @param {string} options.section     	 Section of the cell to update.
+ * @param {number} options.rowIndex    	 Row index of the cell to update.
+ * @param {number} options.columnIndex 	 Column index of the cell to update.
+ * @param {number} options.attributeName The name of the attribute to update.
+ * @param {number} options.value 	   	 The value to update the attribute with.
  *
  * @return {Object} New table state.
  */
@@ -64,7 +65,17 @@ export function updateCellAttribute( state, {
 		} ),
 	};
 }
-
+/**
+ * Gets an attribute for a cell.
+ *
+ * @param {Object} state 			   	 Current table state.
+ * @param {string} options.section     	 Section of the cell to update.
+ * @param {number} options.rowIndex    	 Row index of the cell to update.
+ * @param {number} options.columnIndex 	 Column index of the cell to update.
+ * @param {number} options.attributeName The name of the attribute to get the value of.
+ *
+ * @return {*} The attribute value.
+ */
 export function getCellAttribute( state, {
 	section,
 	rowIndex,
