@@ -1,5 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Table allows cells to be aligned 1`] = `
+"<!-- wp:table -->
+<table class=\\"wp-block-table\\"><tbody><tr><td>None</td><td style=\\"text-align:left\\" data-align=\\"left\\">To the left</td></tr><tr><td style=\\"text-align:center\\" data-align=\\"center\\">Centered</td><td style=\\"text-align:right\\" data-align=\\"right\\">To the right</td></tr></tbody></table>
+<!-- /wp:table -->"
+`;
+
 exports[`Table allows header and footer rows to be switched on and off 1`] = `
 "<!-- wp:table -->
 <table class=\\"wp-block-table\\"><thead><tr><th>header</th><th></th></tr></thead><tbody><tr><td>body</td><td></td></tr><tr><td></td><td></td></tr></tbody><tfoot><tr><td>footer</td><td></td></tr></tfoot></table>
