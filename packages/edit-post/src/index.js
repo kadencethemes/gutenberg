@@ -81,7 +81,6 @@ export function initializeEditor( id, postType, postId, settings, initialEdits )
 		'core/editor.inserter',
 		'core/editor.settings',
 		'core/editor.preview',
-		'core/editor.publish',
 	] );
 
 	render(
