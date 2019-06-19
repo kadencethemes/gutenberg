@@ -7,32 +7,35 @@ import { shallow } from 'enzyme';
  * Internal dependencies
  */
 import { RichText } from '../index';
+import styles from '../../../../block-editor/src/components/rich-text/style.scss';
 
 describe( 'RichText Native', () => {
-	let richText;
-
-	beforeEach( () => {
-		richText = new RichText( { multiline: false } );
-	} );
-
 	describe( 'willTrimSpaces', () => {
+		const wrapper = shallow( <RichText
+			styles={ styles }
+			multiline={ false }
+			formatTypes={ [] }
+		/> );
+		const instance = wrapper.instance();
+		
 		it( 'exists', () => {
-			expect( richText ).toHaveProperty( 'willTrimSpaces' );
+			expect( wrapper.instance() ).toHaveProperty( 'willTrimSpaces' );
 		} );
 
 		it( 'is a function', () => {
-			expect( richText.willTrimSpaces ).toBeInstanceOf( Function );
+			expect( wrapper.instance().willTrimSpaces ).toBeInstanceOf( Function );
 		} );
 
 		it( 'reports false for styled text with no outer spaces', () => {
 			const html = '<p><b>Hello</b> <strong>Hello</strong> WorldWorld!</p>';
-			expect( richText.willTrimSpaces( html ) ).toBe( false );
+			expect( wrapper.instance().willTrimSpaces( html ) ).toBe( false );
 		} );
 	} );
 
 	describe( 'Adds new line on Enter', () => {
 		let newValue;
 		const wrapper = shallow( <RichText
+			styles={ styles }
 			rootTagsToEliminate={ [ 'p' ] }
 			value=""
 			onChange={ ( value ) => {
