@@ -11,24 +11,25 @@ import styles from '../../../../block-editor/src/components/rich-text/style.scss
 
 describe( 'RichText Native', () => {
 	describe( 'willTrimSpaces', () => {
-		const wrapper = shallow( <RichText
-			styles={ styles }
-			multiline={ false }
-			formatTypes={ [] }
-		/> );
-		const instance = wrapper.instance();
-		
+		const richText = shallow(
+			<RichText
+				styles={ styles }
+				multiline={ false }
+				formatTypes={ [] }
+			/>
+		).instance();
+
 		it( 'exists', () => {
-			expect( wrapper.instance() ).toHaveProperty( 'willTrimSpaces' );
+			expect( richText ).toHaveProperty( 'willTrimSpaces' );
 		} );
 
 		it( 'is a function', () => {
-			expect( wrapper.instance().willTrimSpaces ).toBeInstanceOf( Function );
+			expect( richText.willTrimSpaces ).toBeInstanceOf( Function );
 		} );
 
 		it( 'reports false for styled text with no outer spaces', () => {
 			const html = '<p><b>Hello</b> <strong>Hello</strong> WorldWorld!</p>';
-			expect( wrapper.instance().willTrimSpaces( html ) ).toBe( false );
+			expect( richText.willTrimSpaces( html ) ).toBe( false );
 		} );
 	} );
 
