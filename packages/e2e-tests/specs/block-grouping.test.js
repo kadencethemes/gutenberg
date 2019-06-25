@@ -12,6 +12,17 @@ import {
 	getAvailableBlockTransforms,
 } from '@wordpress/e2e-test-utils';
 
+import {
+	registerBlockType,
+	createBlock,
+	setGroupingBlockName,
+} from '@wordpress/blocks';
+
+/**
+ * External dependencies
+ */
+import { noop } from 'lodash';
+
 async function insertBlocksOfSameType() {
 	await insertBlock( 'Paragraph' );
 	await page.keyboard.type( 'First Paragraph' );
@@ -104,7 +115,7 @@ describe( 'Block Grouping', () => {
 		} );
 	} );
 
-	describe( 'Container Block availability', () => {
+	describe( 'Grouping Block availability', () => {
 		beforeEach( async () => {
 			// Disable the Group block
 			await page.evaluate( () => {
@@ -126,7 +137,7 @@ describe( 'Block Grouping', () => {
 			} );
 		} );
 
-		it( 'does not show group transform if container block is disabled', async () => {
+		it( 'does not show group transform if Grouping block is disabled', async () => {
 			const availableTransforms = await getAvailableBlockTransforms();
 
 			expect(
@@ -134,7 +145,7 @@ describe( 'Block Grouping', () => {
 			).not.toContain( 'Group' );
 		} );
 
-		it( 'does not show group option in the options toolbar if container block is disabled ', async () => {
+		it( 'does not show group option in the options toolbar if Grouping block is disabled ', async () => {
 			await clickBlockToolbarButton( 'More options' );
 
 			const blockOptionsDropdownHTML = await page.evaluate( () => document.querySelector( '.block-editor-block-settings-menu__content' ).innerHTML );
@@ -169,6 +180,50 @@ describe( 'Block Grouping', () => {
 			// We expect Group block align setting to match that
 			// of the widest of it's "child" innerBlocks
 			expect( allBlocks[ 0 ].attributes.align ).toBe( 'full' );
+
+			expect( await getEditedPostContent() ).toMatchSnapshot();
+		} );
+	} );
+
+	describe( 'Registering alternative Blocks to handle Grouping interactions', () => {
+		it( 'should use registered grouping block for grouping interactions', async () => {
+			registerBlockType( 'test/alternative-group-block', {
+				attributes: {
+					value: {
+						type: 'string',
+					},
+				},
+				transforms: {
+					from: [ {
+						type: 'block',
+						blocks: [ '*' ],
+						isMultiBlock: true,
+						__experimentalConvert( blocks ) {
+							const groupInnerBlocks = blocks.map( ( { name, attributes, innerBlocks } ) => {
+								return createBlock( name, attributes, innerBlocks );
+							} );
+
+							return createBlock( 'core/alternative-group-block', {}, groupInnerBlocks );
+						},
+					} ],
+				},
+				save: noop,
+				category: 'common',
+				title: 'Alternative Group Block',
+			} );
+			registerBlockType( 'test/alternative-group-block' );
+
+			// Set custom Block as the Block to use for Grouping
+			setGroupingBlockName( 'test/alternative-group-block' );
+
+			// Creating test blocks
+			await insertBlocksOfSameType();
+
+			// Multiselect via keyboard.
+			await pressKeyWithModifier( 'primary', 'a' );
+			await pressKeyWithModifier( 'primary', 'a' );
+
+			await transformBlockTo( 'Alternative Group Block' );
 
 			expect( await getEditedPostContent() ).toMatchSnapshot();
 		} );
