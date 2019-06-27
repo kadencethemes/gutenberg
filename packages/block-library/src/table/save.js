@@ -41,11 +41,13 @@ export default function save( { attributes } ) {
 				{ rows.map( ( { cells }, rowIndex ) => (
 					<tr key={ rowIndex }>
 						{ cells.map( ( { content, tag, align }, cellIndex ) => {
-							const cellStyles = align ? { textAlign: align } : undefined;
+							const cellClasses = classnames( {
+								[ `has-text-align-${ align }` ]: align,
+							} );
 
 							return (
 								<RichText.Content
-									style={ cellStyles }
+									className={ cellClasses ? cellClasses : undefined }
 									tagName={ tag }
 									value={ content }
 									key={ cellIndex }

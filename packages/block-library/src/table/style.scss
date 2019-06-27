@@ -76,6 +76,18 @@
 		th,
 		td {
 			border-color: transparent;
+
+			&.has-text-align-left {
+				text-align: left;
+			}
+
+			&.has-text-align-center {
+				text-align: center;
+			}
+
+			&.has-text-align-right {
+				text-align: right;
+			}
 		}
 
 		border-bottom: 1px solid $light-gray-200;

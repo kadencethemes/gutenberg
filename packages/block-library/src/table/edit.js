@@ -410,8 +410,10 @@ export class TableEdit extends Component {
 								columnIndex,
 							};
 
-							const cellClasses = classnames( { 'is-selected': isSelected } );
-							const cellStyles = align ? { textAlign: align } : undefined;
+							const cellClasses = classnames( {
+								'is-selected': isSelected,
+								[ `has-text-align-${ align }` ]: align,
+							} );
 
 							return (
 								<CellTag
@@ -419,7 +421,6 @@ export class TableEdit extends Component {
 									className={ cellClasses }
 								>
 									<RichText
-										style={ cellStyles }
 										className="wp-block-table__cell-content"
 										value={ content }
 										onChange={ this.onChange }
